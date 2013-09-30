@@ -90,6 +90,8 @@ namespace PacDbg
             {
                 textBoxPacFile.Text = key.GetValue("AutoConfigURL", "").ToString();
 
+                // dodgy method to get PAC file set via auto detect settings
+                // this method is not 100% and should be replaced with a proper method
                 byte[] bytes =(byte[])key.OpenSubKey("Connections").GetValue("DefaultConnectionSettings", null);
 
                 if (bytes!=null)
@@ -102,9 +104,12 @@ namespace PacDbg
 
                     if (string.IsNullOrEmpty(textBoxPacFile.Text))
                     {
-                        if (!string.IsNullOrEmpty(wpad))
+                        if (wpad.Contains(":/"))
                         {
-                            textBoxPacFile.Text = wpad;
+                            if (!string.IsNullOrEmpty(wpad))
+                            {
+                                textBoxPacFile.Text = wpad;
+                            }
                         }
                     }
                     else
@@ -350,7 +355,7 @@ namespace PacDbg
         private void LoadProxy()
         {
             string filename=textBoxPacFile.Text;
-
+            
             try
             {
                 if (textBoxPacFile.Text.Contains("://"))
@@ -375,18 +380,21 @@ namespace PacDbg
                         "Proxy PAC is set via file:// not all applications support this method, please use http location", 1);
                 }
 
-                using (StreamReader reader = href.Utils.EncodingTools.OpenTextFile(filename))
+                if (!string.IsNullOrEmpty(filename))
                 {
-                    if (reader.CurrentEncoding.GetType() != typeof(System.Text.ASCIIEncoding))
+                    using (StreamReader reader = href.Utils.EncodingTools.OpenTextFile(filename))
                     {
-                        listView1.Items.Add(string.Format("PAC file is {0} encoded. Some applications may only support ASCII encoded PAC files", reader.CurrentEncoding.EncodingName), 1);
-                    }
-                    else
-                    {
-                        listView1.Items.Add("PAC file is ASCII encoded", 0);
-                    }
+                        if (reader.CurrentEncoding.GetType() != typeof(System.Text.ASCIIEncoding))
+                        {
+                            listView1.Items.Add(string.Format("PAC file is {0} encoded. Some applications may only support ASCII encoded PAC files", reader.CurrentEncoding.EncodingName), 1);
+                        }
+                        else
+                        {
+                            listView1.Items.Add("PAC file is ASCII encoded", 0);
+                        }
 
-                    textEditor1.Text = reader.ReadToEnd();
+                        textEditor1.Text = reader.ReadToEnd();
+                    }
                 }
             }
             catch (Exception ex)

@@ -116,6 +116,7 @@ namespace SetProxy
         {
             INTERNET_OPTION_REFRESH = 0x00000025,
             INTERNET_OPTION_SETTINGS_CHANGED = 0x00000027,
+            INTERNET_OPTION_PROXY_SETTINGS_CHANGED = 0x0000005F,
             INTERNET_OPTION_PER_CONNECTION_OPTION = 0x0000004B
         }
 
@@ -313,7 +314,7 @@ namespace SetProxy
             }
 
             // refresh IE settings - so we don't need to re-launch internet explorer!
-            NativeMethods.InternetSetOption(IntPtr.Zero, InternetOption.INTERNET_OPTION_SETTINGS_CHANGED, IntPtr.Zero, 0);
+            NativeMethods.InternetSetOption(IntPtr.Zero, InternetOption.INTERNET_OPTION_PROXY_SETTINGS_CHANGED, IntPtr.Zero, 0);
             
             return (returnvalue < 0);
         }

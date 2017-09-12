@@ -58,7 +58,7 @@ namespace SetProxy
                     if (options != IntPtr.Zero)
                     {
                         Marshal.FreeHGlobal(options);
-                        szConnection = IntPtr.Zero;
+                        options = IntPtr.Zero;
 
                     }
                 }
